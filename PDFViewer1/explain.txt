@@ -1,0 +1,44 @@
+pip install PyQt5 PyMuPDF
+pip install pyinstaller
+pip install PyQt5 PyQtWebEngine pyinstaller
+
+
+
+sys — gives access to system-specific features, such as command-line arguments and cleanly exiting the program.
+PyQt5 — the main GUI toolkit we’re using.
+QtWidgets handles windows, buttons, menus, etc.
+QtWebEngineWidgets lets us embed a web engine (Chromium) that can render PDFs, HTML, etc.
+
+
+We define a class called PDFViewer, inheriting from QMainWindow (a standard top-level application window in Qt).
+
+__init__ is the constructor — runs when you create a PDFViewer() object.
+super().__init__() calls the parent constructor to set up the window correctly.
+
+self.viewer = QtWebEngineWidgets.QWebEngineView()
+self.setCentralWidget(self.viewer)
+Creates a web view widget — this is a mini browser that can render a PDF directly.
+Makes this viewer the central widget of the main window (so it fills the window).
+
+QFileDialog.getOpenFileName() — opens a standard file picker dialog.
+The first argument (self) makes it modal to the main window.
+"Open PDF" — title of the dialog.
+"" — starting folder (empty means “current”)
+"PDF Files (*.pdf)" — only show .pdf files.
+It returns a tuple — (file_path, file_type_filter). We only need file_path.
+If the user picked a file, self.viewer.load(QtCore.QUrl.fromLocalFile(file_path)) loads that local PDF file into the embedded browser view.
+
+if __name__ == "__main__": → ensures this only runs if the script is executed directly, not imported.
+QtCore is imported here to access QUrl.
+QApplication initializes the Qt environment. It’s required before creating any GUI elements.
+viewer = PDFViewer() creates your main window.
+viewer.show() makes it visible.
+app.exec_() starts the Qt event loop — this keeps your window alive until it’s closed.
+sys.exit() normally closes the app cleanly with an exit code, but in Spyder or Jupyter, it prints “SystemExit: 0”.
+So we wrap it in try/except to suppress that harmless warning.
+
+
+For app
+First, find where you saved your script (pdf_viewer.py).
+cd "C:\Users\ACER\Documents\Projects\PDFViewer"
+pyinstaller --onefile --windowed pdf_viewer.py
